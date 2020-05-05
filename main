@@ -1,0 +1,190 @@
+import java.io.*;
+import java.util.*;
+/******************************************************************/
+class Main 
+{
+  public static void main(String[] args) throws FileNotFoundException
+  {
+    DCLL circ = new DCLL();
+    circ = insert("input.txt");
+  }
+  /******************************************************************/
+  public static DCLL insert(String fileName) throws FileNotFoundException
+  {
+    DCLL list = new DCLL();
+    try(Scanner input = new Scanner(new File(fileName)))
+    {
+      while(input.hasNextLine())
+      {
+        String element = input.nextLine();
+        list.add(element);
+      }
+      list.deleteInput();
+    }
+    list.traverse();
+    return list;
+  }
+}
+/*==================================================================*/
+class DCLL
+{
+  private Node head;
+  public boolean isEmpty() // returns a boolean value if head is empty or not 
+  {
+    return head==null;
+  }
+  public void add(String name)
+  {
+    Node newNode = new Node(name);
+    if(isEmpty())
+    {
+      newNode.setNext(newNode); // nn.next = nn;
+      newNode.setPrev(newNode); // nn.prev = nn;
+      head=newNode;
+    }
+    else
+    {
+      Node tail = head.getPrev();
+      tail.setNext(newNode);
+      newNode.setPrev(tail);
+      newNode.setNext(head);
+      head.setPrev(newNode);
+    }
+  }
+  /******************************************************************/
+  public void deleteInput()
+  {
+   if(head==null) // if the list is empty, then return because there is nothing to delete
+   {
+     return;
+   }
+   else
+   {
+      Scanner input = new Scanner(System.in);
+      System.out.println("\nHow many nodes would you like to delete?\n\nNODES AVAILABLE= "+size());
+      System.out.println();
+      int numDelete = input.nextInt(); // prompts user to ask how many nodes to delete 
+      System.out.println();
+      if(numDelete > size()) // if the input is greater than the size of the array, then dont do anything to it 
+      {
+        System.out.println("I can't delete more nodes when it's greater than the size.");
+        return;
+      }
+      else if(numDelete<=size()) // otherwise put it in the for loop and call the delete function 
+      {
+        for(int i=0;i<numDelete;i++)
+        {
+          delete(head);
+        }
+      }
+    }
+  }
+  /******************************************************************/
+  private void delete(Node nodeToRemove)
+  {
+    Node prev = nodeToRemove.getPrev();
+    Node next = nodeToRemove.getNext();
+    if(prev == nodeToRemove && next == nodeToRemove) // case to remove a node if and only if its the only node available 
+    {
+      head=null;
+    }
+    else // otherwise remove the node in-between
+    {
+      prev.setNext(next);
+      next.setPrev(prev);
+      if(head==nodeToRemove)
+      {
+        head=next;
+      }
+    }
+  }
+  /******************************************************************/
+  public int size() // gets size of circular linked list 
+  {
+    int size=1;
+    Node temp = head;
+    if(head!=null) // if it isnt node, continue traversing 
+    {
+      do
+      {
+        temp=temp.getNext();
+        size++;
+      }
+      while(temp.getNext()!=head);
+    }
+    else // if its empty, return 0 
+    {
+      size=0;
+      return size;
+    }
+    return size;
+  }
+  /******************************************************************/
+  public void traverse() // this method displays the DLL traversing forward and backward
+  {
+    System.out.println("==========");
+    Node currentNode = head;
+    int size = size();
+    if(size==0) // if node is empty, then display and exit 
+    {
+      System.out.println("==========");
+      System.out.println("==========");
+      return;
+    }
+    for(int i=0; i<size; i++) // traverse and print forward 
+    {
+      System.out.println(currentNode.getValue());
+      currentNode=currentNode.getNext();
+    }
+    System.out.println("=========="); 
+    currentNode=head.getPrev();
+    for(int i=0; i<size; i++) // traverse and print backward 
+    {
+      System.out.println(currentNode.getValue()); 
+      currentNode=currentNode.getPrev();
+    }
+    System.out.println("==========");
+  }
+}
+/*==================================================================*/
+class Node
+{
+  private Node next;
+  private Node prev;
+  private String name;
+  /******************************************************************/
+  Node(String name) // constructor
+  {
+    this.name=name;
+  }
+  /******************************************************************/
+  public String getValue() // this function returns the name 
+  {
+    return this.name;
+  }
+  /******************************************************************/
+  public void setValue(String name) // this function changes the value
+  {
+    this.name=name;
+  }
+  /******************************************************************/
+  public Node getNext() // this function returns the previous node 
+  {
+    return this.next;
+  }
+  /******************************************************************/
+  public Node getPrev() // this function returns the previous node 
+  {
+    return this.prev;
+  }
+  /******************************************************************/
+  public void setNext(Node next) // this function sets the next node
+  {
+    this.next=next;
+  }
+  /******************************************************************/
+  public void setPrev(Node prev) // this function sets the previous node
+  {
+    this.prev=prev;
+  }
+}
